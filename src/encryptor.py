@@ -1,6 +1,5 @@
 import os
 import socket
-
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP, AES
 
@@ -47,6 +46,7 @@ def encrypt(dataFile, public_key_file):
 # Execution Starts Here!S
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((IP_ADDRESS, PORT))
+    s.send('public_key required!'.encode())
     public_key = s.recv(1024)
     with open('public_key.pem', 'wb') as f:
         f.write(public_key)

