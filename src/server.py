@@ -1,12 +1,14 @@
 import socket
 
-IP_ADDRESS = '127.0.0.1'
-PORT = 5678
+
+IP_ADDRESS  = '127.0.0.1'
+PORT        = 5678
 
 print('Creating socket...')
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((IP_ADDRESS, PORT))
-    print('The server is running...')
+    print('Running server...')
+    print('\n')
     while True:
         s.listen(1)
         conn, addr = s.accept()
@@ -15,15 +17,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             while True:
                 request = conn.recv(1024).decode()
                 if request == 'public_key required!':
-                    with open('public_key.pem', 'r') as f: 
-                        public_key = f.read()
+                    with open('public_key.pem', 'r') as public_key_file: 
+                        public_key = public_key_file.read()
                         conn.send(f'{public_key}'.encode())
-                        print('public_key.pem sent!')
-                    break
+                        print('Done Sending: public_key.pem')
+                    break 
                 if request == 'private_key required!':
-                    with open('private_key.pem', 'r') as f: 
-                        private_key = f.read()
+                    with open('private_key.pem', 'r') as private_key_file: 
+                        private_key = private_key_file.read()
                         conn.send(f'{private_key}'.encode())
-                        print('private_key.pem sent!')
+                        print('Done Sending: private_key.pem')
                     break
-            print('Connection closed!')
+            print(f'Connection from {addr} closed!')
+            print('\n')

