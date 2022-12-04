@@ -1,6 +1,6 @@
-## Windows issues to protect users during a ransomware attack
+# Windows issues to protect users during a ransomware attack
 
-#Procedure
+## Procedure
   Download the Virtual Box from https://www.virtualbox.org/wiki/Downloads <br>
   Download the Virtual Machine from https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/ <br>
   The Real-time protection may need to be turned off in the host machine before downloading our code since Windows Security flags it as a ransomware <br>
