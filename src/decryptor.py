@@ -57,9 +57,9 @@ get_private_key()
 print('\n')
 encrypted_extensions = ('.CC4031',)
 file_paths = get_file_paths(encrypted_extensions)
+print(len(file_paths))
 print('\n')
 for file_path in file_paths:
-    if 'random_file' in file_path:
-        decrypt(file_path, 'private_key.pem')
+    decrypt(file_path, 'private_key.pem')
 print('\n')
 os.remove('private_key.pem')
