@@ -1,12 +1,11 @@
 import os
 import socket
 import requests
+import webbrowser
 
 from Crypto.PublicKey   import RSA
 from Crypto.Cipher      import PKCS1_OAEP, AES
 from Crypto.Random      import get_random_bytes
-import webbrowser
-
 
 IP_ADDRESS  = '127.0.0.1'
 PORT        = 5678
