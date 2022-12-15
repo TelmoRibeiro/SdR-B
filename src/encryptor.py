@@ -7,7 +7,7 @@ from Crypto.PublicKey   import RSA
 from Crypto.Cipher      import PKCS1_OAEP, AES
 from Crypto.Random      import get_random_bytes
 
-IP_ADDRESS  = '127.0.0.1'
+IP_ADDRESS  = '25.61.224.228'
 PORT        = 5678
 
 def get_public_key():
