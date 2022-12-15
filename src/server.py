@@ -1,7 +1,7 @@
 import socket
 
 
-IP_ADDRESS  = '25.61.224.228'
+IP_ADDRESS  = '25.6.175.231'
 PORT        = 5678
 
 print('Creating socket...')
